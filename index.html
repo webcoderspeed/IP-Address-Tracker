@@ -74,10 +74,6 @@
      var popup = marker.bindPopup(`<b>${data.location.city + ', ' + data.location.region}</b>`);
      popup.openPopup();
 
-     if (map.hasLayer(layer)){
-        return map.hasLayer()
-      }
-
     }).catch(err => console.log(err.message))
     })
 
