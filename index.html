@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ08O6eIhR-zss5NZjowIHXAkd1rrYVzhWMGQ&usqp=CAU">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./css/style.css">
+  
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+
+  <title>IP Address Tracker</title>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <h1>IP Address Tracker</h1>
+      <img src="./images/pattern-bg.png" class="bg" alt="">
+      <form class="searchbar" id="ip-form">
+      <input type="text" id="ip-address">
+      <button class="search">
+        <img src="./images/icon-arrow.svg" alt="">
+      </button>
+      </form>
+      <div class="info-box">
+        <div class="col">
+          <span>ip address</span>
+          <p class="ip">192.212.174.101</p>
+        </div>
+        <div class="col">
+          <span>Location</span>
+          <p class="location">Rosemead, California</p>
+        </div>
+        <div class="col">
+          <span>timezone</span>
+          <p>UTC <span class=utc>-08:00</span></p>
+        </div>
+        <div class="col">
+          <span>isp</span>
+          <p class="isp">Southern California Edison</p>
+        </div>
+      </div>
+    </div>
+    <div id="tracker">
+    </div>
+  </div>
+  <script>
+    const ipAddress = document.querySelector('.ip')
+    const loc = document.querySelector('.location')
+    const utc = document.querySelector('.utc')
+    const isp = document.querySelector('.isp')
+
+    // fetching input data
+    fetchedIP = document.getElementById('ip-address')
+    document.getElementById('ip-form').addEventListener('submit', (e) => {
+        e.preventDefault()
+    fetch(`https://geo.ipify.org/api/v1?apiKey=at_LBuijO5HZn85V1GKrHH0ttpZLNPwE&ipAddress=${fetchedIP.value}
+    `)
+    .then(res => res.json())
+    .then(data => {
+      ipAddress.textContent = data.ip;
+      loc.textContent = data.location.city + ', ' + data.location.region+' '+data.location.postalCode;
+      utc.textContent = data.location.timezone
+      isp.textContent = data.isp
+
+      console.log(data.location.lat,data.location.lng)
+
+    document.getElementById('tracker').innerHTML ="<div id='map'></div>"
+      
+    var map = L.map('map').setView([data.location.lat,data.location.lng],15);
+     var layer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+     var marker = L.marker([data.location.lat,data.location.lng]).addTo(map);
+     var popup = marker.bindPopup(`<b>${data.location.city + ', ' + data.location.region}</b>`);
+     popup.openPopup();
+
+     if (map.hasLayer(layer)){
+        return map.hasLayer()
+      }
+
+    }).catch(err => console.log(err.message))
+    })
+
+    var map = L.map('tracker').setView([37.38605,-118.07285],9);
+     var layer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+     var marker = L.marker([20.5937,78.9629]).addTo(map);
+     var popup = marker.bindPopup(`<b>Rosemead, California</b>`);
+     popup.openPopup();
+
+
+  </script>
+</body>
+</html>
+
+
+<!-- 
+
+
+data.ip
+data.location.city + ', ' + data.location.region+' '+data.location.postalCode
+data.isp
+data.location.timezone
+data.location.lat
+data.location.lng
+
+ -->
